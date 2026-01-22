@@ -1,3 +1,24 @@
+# -------------------------------------------------
+# VCMI build usage (local)
+#
+# Fast loop (no export surface changes):
+#   2) Run TypeScript compiler (tsconfig.json)
+#      -> updates client/src/js
+#   (Re-generating linker.js is not needed if exports did not change.)
+#
+# Clean rebuild (recommended before trying things out / CI-like run):
+#   1) Clear client/src/js (generated output)
+#   2) Run TypeScript compiler (tsconfig.json)
+#      -> generates client/src/js/{Core/**, main.js, ...}
+#   3) Run server/src/php/tools/generate_linker.php
+#      -> scans JS exports and generates client/src/js/linker.js
+#      -> also reports name duplicates (expected: global names are unique)
+#
+# The JS directory is required for local execution, but its contents are
+# intentionally not versioned.
+# -------------------------------------------------
+
+
 # Ignore everything by default
 *
 
@@ -5,18 +26,25 @@
 !.gitignore
 !README.md
 
-# Allow directories leading to TS sources
+# Allow relevant directories
 !client/
 !client/src/
 !client/src/ts/
+!client/src/js/
+!server/
+!server/src/
+!server/src/php/
+!server/src/php/tools/
 
 # Allow TS sources + tsconfig
 !client/src/ts/**
 !client/src/ts/tsconfig.json
 
-# Allow Linker (explicit tooling exception)
-!server/
-!server/src/
-!server/src/php/
-!server/src/php/tools/
+# Allow JS output directory for generators, but ignore its contents
+client/src/js/**
+
+# Allow Linker
 !server/src/php/tools/generate_linker.php
+
+# Allow root demo file
+!index.html
